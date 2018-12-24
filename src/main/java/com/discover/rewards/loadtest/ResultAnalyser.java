@@ -15,22 +15,29 @@ public class ResultAnalyser implements Runnable{
 
     @Override
     public void run() {
-        System.out.println("Starting Result Analyser thread..");
-        Result pResult = null;
-        while (true){
-            Result cResult = ra.getResult();
-            if (cResult == null){
-                try {
-                    Thread.sleep(1000);
-                } catch (Throwable t){
-                    t.printStackTrace();
+
+        try {
+
+            System.out.println("Starting Result Analyser thread..");
+            Result pResult = null;
+            while (true) {
+                Result cResult = ra.getResult();
+                if (cResult == null) {
+                    try {
+                        Thread.sleep(1000);
+                    } catch (Throwable t) {
+                        t.printStackTrace();
+                    }
+                } else if (rc.compare(cResult, pResult) != 0) {
+                    //TODO Fix this.. what happens when there is a mismatch..
+                    System.out.println(cResult.getResponse());
                 }
-            } else  if (rc.compare(cResult,pResult) != 0){
-                //TODO Fix this.. what happens when there is a mismatch..
-                System.out.println(cResult.getResponse());
+
+                pResult = cResult != null ? cResult : pResult;
             }
 
-            pResult = cResult!=null?cResult:pResult;
+        } catch (Exception e){
+            e.printStackTrace();
         }
     }
 }

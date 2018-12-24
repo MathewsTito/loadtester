@@ -1,13 +1,17 @@
-package com.discover.rewards.loadtest;
+package com.discover.rewards.loadtest.balance;
+
+import com.discover.rewards.loadtest.Command;
+import com.discover.rewards.loadtest.Result;
+import com.discover.rewards.loadtest.ResultAggregator;
 
 /**
  * Created by tito on 12/24/18.
  */
-public class CommandRewardBalance implements Command {
+public class CommandBalance implements Command {
     private Result result;
     private ResultAggregator ra;
 
-    public CommandRewardBalance(ResultAggregator r){
+    public CommandBalance(ResultAggregator r){
         result = new Result();
         result.setCreationTime(System.currentTimeMillis());
         ra = r;
