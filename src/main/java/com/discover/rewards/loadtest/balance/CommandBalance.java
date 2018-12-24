@@ -30,7 +30,7 @@ public class CommandBalance implements Command {
     @Override
     public void prepare() {
 
-        File iFile = new File("resources/commandbalance.xml");
+        File iFile = new File("commandbalance.xml");
         requestEntity = new FileRequestEntity(iFile, "text/xml; charset=ISO-8859-1");
         result.setRequest(requestEntity.toString());
 
