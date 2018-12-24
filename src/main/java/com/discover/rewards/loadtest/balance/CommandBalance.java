@@ -3,6 +3,13 @@ package com.discover.rewards.loadtest.balance;
 import com.discover.rewards.loadtest.Command;
 import com.discover.rewards.loadtest.Result;
 import com.discover.rewards.loadtest.ResultAggregator;
+import org.apache.commons.httpclient.HttpClient;
+import org.apache.commons.httpclient.methods.FileRequestEntity;
+import org.apache.commons.httpclient.methods.PostMethod;
+import org.apache.commons.httpclient.methods.RequestEntity;
+
+import java.io.File;
+import java.io.IOException;
 
 /**
  * Created by tito on 12/24/18.
@@ -10,6 +17,9 @@ import com.discover.rewards.loadtest.ResultAggregator;
 public class CommandBalance implements Command {
     private Result result;
     private ResultAggregator ra;
+    private String url = ""; //TODO Fix this..
+    private RequestEntity requestEntity = null;
+
 
     public CommandBalance(ResultAggregator r){
         result = new Result();
@@ -19,16 +29,36 @@ public class CommandBalance implements Command {
 
     @Override
     public void prepare() {
-        //TODO prepare request xml
-        result.setRequest(""); //TODO set request value
+
+        File iFile = new File("resources/commandbalance.xml");
+        requestEntity = new FileRequestEntity(iFile, "text/xml; charset=ISO-8859-1");
+        result.setRequest(requestEntity.toString());
+
     }
 
-    private void execute() {
-        result.setReqStartTime(System.currentTimeMillis());
+    private void execute() throws IOException{
 
-        //TODO Make the HTTP Call here..
+
+        PostMethod post = new PostMethod(url);
+        post.setRequestEntity(requestEntity);
+        post.setRequestHeader("SOAPAction", "");  //TODO Fix this
+        HttpClient client = new HttpClient();
+        try {
+
+            result.setReqStartTime(System.currentTimeMillis());
+
+            client.executeMethod(post);
+
+
+            String response = post.getResponseBodyAsString();
+
+            result.setResponse(response);
+        }finally {
+            post.releaseConnection();
+        }
 
         result.setReqEndTime(System.currentTimeMillis());
+
         ra.notify(result);
     }
 
@@ -39,6 +69,12 @@ public class CommandBalance implements Command {
 
     @Override
     public void run() {
-        execute();
+
+        try {
+            execute();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 }
+
